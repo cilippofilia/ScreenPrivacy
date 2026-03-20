@@ -19,20 +19,6 @@ Add ScreenPrivacy as a Swift Package dependency in Xcode or via `Package.swift`.
 
 ## Usage
 
-Quick start with the default shield:
-
-```swift
-import ScreenPrivacy
-import SwiftUI
-
-struct AccountView: View {
-    var body: some View {
-        AccountDetailsView()
-            .screenPrivacyShield()
-    }
-}
-```
-
 Apply the modifier to any view you want to protect:
 
 ```swift
@@ -95,6 +81,7 @@ struct AccountView: View {
 - Optionally shows the shield when screen capture is detected.
 - Applies `privacySensitive()` to the protected content.
 - Uses secure rendering by default to block screenshots and recordings.
+- Secure rendering is implemented by hosting SwiftUI inside a secure text field canvas view.
 
 ## Customization
 
@@ -111,10 +98,10 @@ struct AccountView: View {
 ## FAQ
 
 **Does this block screenshots?**  
-Yes. ScreenPrivacy uses a secure rendering container to block screenshots and screen recordings by default.
+Yes. ScreenPrivacy uses a secure text field container to block screenshots and screen recordings by default.
 
 **Does it work in widgets or extensions?**  
-This package targets SwiftUI views in your app. It is not designed to shield widget timelines.
+This package targets SwiftUI views in your app. It is not designed to shield widget timelines, yet.
 
 **Can I add analytics or logging?**  
 Yes. You can wrap `ScreenPrivacyContainer` and observe your own app lifecycle to log events, without changing the shield itself.

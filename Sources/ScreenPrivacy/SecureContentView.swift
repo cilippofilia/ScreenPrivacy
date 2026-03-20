@@ -10,78 +10,74 @@ import UIKit
 
 /// Wraps SwiftUI content in a secure UIKit container to prevent capture.
 struct SecureContentView<Content: View>: UIViewRepresentable {
-    private let content: Content
+    let content: Content
 
     init(@ViewBuilder content: () -> Content) {
         self.content = content()
     }
 
-    func makeUIView(context: Context) -> SecureContainerView {
-        SecureContainerView()
+    func makeUIView(context: Context) -> UIView {
+        let containerView = UIView()
+        containerView.backgroundColor = .clear
+
+        let secureTextField = SecureContainerTextField()
+        secureTextField.isSecureTextEntry = true
+        secureTextField.backgroundColor = .clear
+        secureTextField.translatesAutoresizingMaskIntoConstraints = false
+
+        containerView.addSubview(secureTextField)
+        NSLayoutConstraint.activate([
+            secureTextField.leadingAnchor.constraint(equalTo: containerView.leadingAnchor),
+            secureTextField.trailingAnchor.constraint(equalTo: containerView.trailingAnchor),
+            secureTextField.topAnchor.constraint(equalTo: containerView.topAnchor),
+            secureTextField.bottomAnchor.constraint(equalTo: containerView.bottomAnchor)
+        ])
+
+        guard let secureView = secureTextField.secureContentView else {
+            return containerView
+        }
+
+        let hostingController = UIHostingController(rootView: content)
+        hostingController.view.backgroundColor = .clear
+        hostingController.view.frame = secureView.bounds
+        hostingController.view.autoresizingMask = [.flexibleWidth, .flexibleHeight]
+        secureView.addSubview(hostingController.view)
+
+        context.coordinator.hostingController = hostingController
+
+        return containerView
     }
 
-    func updateUIView(_ uiView: SecureContainerView, context: Context) {
-        uiView.host(content: content)
+    func updateUIView(_ uiView: UIView, context: Context) {
+        context.coordinator.hostingController?.rootView = content
+    }
+
+    func makeCoordinator() -> Coordinator {
+        Coordinator()
     }
 }
 
-@MainActor
-final class SecureContainerView: UIView {
-    private let textField = SecureTextField()
-    private var hostingController: UIHostingController<AnyView>?
-
-    override init(frame: CGRect) {
-        super.init(frame: frame)
-        setup()
+extension SecureContentView {
+    final class Coordinator {
+        var hostingController: UIHostingController<Content>?
     }
+}
 
-    required init?(coder: NSCoder) {
-        super.init(coder: coder)
-        setup()
-    }
-
-    func host<Content: View>(content: Content) {
-        let hostedView = AnyView(content)
-        if let hostingController {
-            hostingController.rootView = hostedView
-        } else {
-            let controller = UIHostingController(rootView: hostedView)
-            controller.view.backgroundColor = .clear
-            hostingController = controller
-
-            let hostedUIView = controller.view!
-            hostedUIView.translatesAutoresizingMaskIntoConstraints = false
-            textField.addSubview(hostedUIView)
-            NSLayoutConstraint.activate([
-                hostedUIView.leadingAnchor.constraint(equalTo: textField.leadingAnchor),
-                hostedUIView.trailingAnchor.constraint(equalTo: textField.trailingAnchor),
-                hostedUIView.topAnchor.constraint(equalTo: textField.topAnchor),
-                hostedUIView.bottomAnchor.constraint(equalTo: textField.bottomAnchor)
-            ])
+private final class SecureContainerTextField: UITextField {
+    var secureContentView: UIView? {
+        subviews.first { subview in
+            String(describing: subview).contains("UITextLayoutCanvasView")
         }
     }
 
-    private func setup() {
-        backgroundColor = .clear
-        textField.translatesAutoresizingMaskIntoConstraints = false
-        textField.isSecureTextEntry = true
-        textField.backgroundColor = .clear
-        textField.textColor = .clear
-        textField.tintColor = .clear
-        textField.text = " "
+    override func hitTest(_ point: CGPoint, with event: UIEvent?) -> UIView? {
+        for subview in subviews.reversed() {
+            let convertedPoint = subview.convert(point, from: self)
+            if let hitView = subview.hitTest(convertedPoint, with: event) {
+                return hitView
+            }
+        }
 
-        addSubview(textField)
-        NSLayoutConstraint.activate([
-            textField.leadingAnchor.constraint(equalTo: leadingAnchor),
-            textField.trailingAnchor.constraint(equalTo: trailingAnchor),
-            textField.topAnchor.constraint(equalTo: topAnchor),
-            textField.bottomAnchor.constraint(equalTo: bottomAnchor)
-        ])
-    }
-}
-
-final class SecureTextField: UITextField {
-    override var canBecomeFirstResponder: Bool {
-        false
+        return nil
     }
 }

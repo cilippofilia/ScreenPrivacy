@@ -49,3 +49,27 @@ import Testing
 
     #expect(isVisible == false)
 }
+
+@Test func shieldHiddenWhenDisabledEvenIfCapturedOrInactive() async {
+    let isVisible = await MainActor.run {
+        let monitor = ScreenPrivacyMonitor()
+        monitor.updateConfiguration(isEnabled: false, includeCaptureDetection: true)
+        monitor.update(scenePhase: .inactive)
+        monitor.update(isCaptured: true)
+        return monitor.isShieldVisible
+    }
+
+    #expect(isVisible == false)
+}
+
+@Test func shieldVisibleWhenInactiveEvenIfCaptureDetectionDisabled() async {
+    let isVisible = await MainActor.run {
+        let monitor = ScreenPrivacyMonitor()
+        monitor.updateConfiguration(isEnabled: true, includeCaptureDetection: false)
+        monitor.update(scenePhase: .inactive)
+        monitor.update(isCaptured: false)
+        return monitor.isShieldVisible
+    }
+
+    #expect(isVisible == true)
+}
