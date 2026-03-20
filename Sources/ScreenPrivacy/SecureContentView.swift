@@ -33,23 +33,19 @@ struct SecureContentView<Content: View>: UIViewRepresentable {
             secureTextField.bottomAnchor.constraint(equalTo: containerView.bottomAnchor)
         ])
 
-        guard let secureView = secureTextField.secureContentView else {
-            return containerView
-        }
-
         let hostingController = UIHostingController(rootView: content)
         hostingController.view.backgroundColor = .clear
-        hostingController.view.frame = secureView.bounds
-        hostingController.view.autoresizingMask = [.flexibleWidth, .flexibleHeight]
-        secureView.addSubview(hostingController.view)
 
+        context.coordinator.secureTextField = secureTextField
         context.coordinator.hostingController = hostingController
+        context.coordinator.attachHostedViewIfPossible()
 
         return containerView
     }
 
     func updateUIView(_ uiView: UIView, context: Context) {
         context.coordinator.hostingController?.rootView = content
+        context.coordinator.attachHostedViewIfPossible()
     }
 
     func makeCoordinator() -> Coordinator {
@@ -59,11 +55,28 @@ struct SecureContentView<Content: View>: UIViewRepresentable {
 
 extension SecureContentView {
     final class Coordinator {
+        fileprivate weak var secureTextField: SecureContainerTextField?
         var hostingController: UIHostingController<Content>?
+
+        func attachHostedViewIfPossible() {
+            guard
+                let secureTextField,
+                let secureView = secureTextField.secureContentView,
+                let hostedView = hostingController?.view
+            else {
+                return
+            }
+
+            if hostedView.superview !== secureView {
+                hostedView.frame = secureView.bounds
+                hostedView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
+                secureView.addSubview(hostedView)
+            }
+        }
     }
 }
 
-private final class SecureContainerTextField: UITextField {
+fileprivate final class SecureContainerTextField: UITextField {
     var secureContentView: UIView? {
         subviews.first { subview in
             String(describing: subview).contains("UITextLayoutCanvasView")
