@@ -14,6 +14,7 @@ public struct ScreenPrivacyContainer<Content: View, Shield: View>: View {
     private let content: Content
     private let isEnabled: Bool
     private let includeCaptureDetection: Bool
+    private let blocksScreenCapture: Bool
     private let shield: () -> Shield
 
     /// Creates a privacy container.
@@ -21,16 +22,19 @@ public struct ScreenPrivacyContainer<Content: View, Shield: View>: View {
     /// - Parameters:
     ///   - isEnabled: A Boolean that controls whether the shield can appear.
     ///   - includeCaptureDetection: A Boolean that enables screen capture monitoring.
+    ///   - blocksScreenCapture: A Boolean that enables secure rendering to block captures.
     ///   - content: The protected content.
     ///   - shield: A view builder that supplies the shield content.
     public init(
         isEnabled: Bool = true,
         includeCaptureDetection: Bool = true,
+        blocksScreenCapture: Bool = true,
         @ViewBuilder content: () -> Content,
         @ViewBuilder shield: @escaping () -> Shield = { DefaultScreenPrivacyShieldView() }
     ) {
         self.isEnabled = isEnabled
         self.includeCaptureDetection = includeCaptureDetection
+        self.blocksScreenCapture = blocksScreenCapture
         self.content = content()
         self.shield = shield
     }
@@ -40,6 +44,7 @@ public struct ScreenPrivacyContainer<Content: View, Shield: View>: View {
             .screenPrivacyShield(
                 isEnabled: isEnabled,
                 includeCaptureDetection: includeCaptureDetection,
+                blocksScreenCapture: blocksScreenCapture,
                 shield: shield
             )
     }

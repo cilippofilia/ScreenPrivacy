@@ -9,6 +9,8 @@ import SwiftUI
 
 /// The default privacy shield shown when sensitive content is hidden.
 public struct DefaultScreenPrivacyShieldView: View {
+    @Environment(\.colorScheme) private var colorScheme
+
     /// Creates the default privacy shield view.
     public init() { }
 
@@ -18,7 +20,7 @@ public struct DefaultScreenPrivacyShieldView: View {
                 .symbolRenderingMode(.hierarchical)
                 .imageScale(.large)
                 .font(.largeTitle)
-                .foregroundStyle(.secondary)
+                .foregroundStyle(.gray)
 
             Text("Content Hidden")
                 .font(.title2)
@@ -27,10 +29,12 @@ public struct DefaultScreenPrivacyShieldView: View {
 
             Text("This screen is protected for privacy.")
                 .font(.subheadline)
-                .foregroundStyle(.secondary)
+                .foregroundStyle(.gray)
         }
         .padding()
         .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .background(.background)
+        .ignoresSafeArea()
         .accessibilityElement(children: .combine)
         .accessibilityLabel("Content hidden for privacy")
     }

@@ -14,6 +14,7 @@ struct ScreenPrivacyShieldModifier<Shield: View>: ViewModifier {
 
     private let isEnabled: Bool
     private let includeCaptureDetection: Bool
+    private let blocksScreenCapture: Bool
     private let shield: () -> Shield
 
     @State private var monitor = ScreenPrivacyMonitor()
@@ -22,17 +23,26 @@ struct ScreenPrivacyShieldModifier<Shield: View>: ViewModifier {
     init(
         isEnabled: Bool,
         includeCaptureDetection: Bool,
+        blocksScreenCapture: Bool,
         shield: @escaping () -> Shield
     ) {
         self.isEnabled = isEnabled
         self.includeCaptureDetection = includeCaptureDetection
+        self.blocksScreenCapture = blocksScreenCapture
         self.shield = shield
     }
 
     func body(content: Content) -> some View {
         let base = ZStack {
-            content
-                .privacySensitive()
+            if blocksScreenCapture {
+                SecureContentView {
+                    content
+                        .privacySensitive()
+                }
+            } else {
+                content
+                    .privacySensitive()
+            }
 
             if monitor.isShieldVisible {
                 shield()
