@@ -1,6 +1,6 @@
 # ScreenPrivacy
 
-[English](../README.md) | [Italiano](README.it.md) | [Español](README.es.md) | [Français](README.fr.md) | [Deutsch](README.de.md) | [Русский](README.ru.md)
+[English](../README.md) 🇬🇧 | [Italiano](README.it.md) 🇮🇹 | [Español](README.es.md) 🇪🇸 | [Français](README.fr.md) 🇫🇷 | [Deutsch](README.de.md) 🇩🇪 | [Русский](README.ru.md) 🇷🇺
 
 ScreenPrivacy предоставляет легкий экран приватности для SwiftUI, который автоматически закрывает конфиденциальные представления, когда приложение становится неактивным или обнаружена запись/захват экрана. Он также включает безопасный рендеринг по умолчанию, который предотвращает снимки экрана и записи защищенного контента. Это решение рассчитано на однострочное подключение и сохраняет UI чистым, тестируемым и уважительным к приватности.
 

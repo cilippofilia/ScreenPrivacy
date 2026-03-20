@@ -1,6 +1,6 @@
 # ScreenPrivacy
 
-[English](../README.md) | [Italiano](README.it.md) | [Español](README.es.md) | [Français](README.fr.md) | [Deutsch](README.de.md) | [Русский](README.ru.md)
+[English](../README.md) 🇬🇧 | [Italiano](README.it.md) 🇮🇹 | [Español](README.es.md) 🇪🇸 | [Français](README.fr.md) 🇫🇷 | [Deutsch](README.de.md) 🇩🇪 | [Русский](README.ru.md) 🇷🇺
 
 ScreenPrivacy bietet einen leichtgewichtigen SwiftUI-Privatsphärenschutz, der sensible Ansichten automatisch abdeckt, wenn die App inaktiv wird oder eine Bildschirmaufnahme erkannt wird. Es aktiviert außerdem standardmäßig sicheres Rendering, das Screenshots und Bildschirmaufzeichnungen des geschützten Inhalts verhindert. Es ist als Ein-Zeilen-Add-on gedacht, das die UI sauber, testbar und datenschutzfreundlich hält.
 
