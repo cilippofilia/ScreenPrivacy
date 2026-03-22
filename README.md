@@ -161,4 +161,4 @@ Usually yes, but if your product only cares about app-switcher privacy, set `inc
 
 ## License
 
-MIT
+[MIT](LICENSE)
