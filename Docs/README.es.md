@@ -2,13 +2,26 @@
 
 [English](../README.md) 🇬🇧 | [Italiano](README.it.md) 🇮🇹 | [Español](README.es.md) 🇪🇸 | [Français](README.fr.md) 🇫🇷 | [Deutsch](README.de.md) 🇩🇪 | [Русский](README.ru.md) 🇷🇺
 
-ScreenPrivacy ofrece un escudo de privacidad ligero para SwiftUI que cubre automáticamente las vistas sensibles cuando la app pasa a inactiva, con la detección de captura de pantalla como capa opcional adicional. También habilita el renderizado seguro por defecto, que impide capturas y grabaciones de pantalla del contenido protegido. Está pensado para ser un añadido de una sola línea, manteniendo la UI limpia, testeable y respetuosa con la privacidad.
+Protege pantallas sensibles de SwiftUI con un escudo de privacidad que aparece cuando la app pasa a inactiva y, opcionalmente, cuando se detecta captura de pantalla. `ScreenPrivacy` también habilita renderizado seguro por defecto para que el contenido protegido sea más difícil de capturar o grabar.
 
-Casos de uso útiles:
-- Muestras saldos, datos de salud o información personal.
-- Soportas multitarea y quieres snapshots seguros de la app.
-- Necesitas un escudo por defecto rápido pero totalmente personalizable.
-- Quieres bloquear capturas y grabaciones sin configuración extra.
+## Por Qué ScreenPrivacy
+
+- Protección en una línea para vistas sensibles de SwiftUI.
+- Snapshots seguros en el app switcher mediante protección al quedar inactiva la escena.
+- Detección de captura opcional como capa extra sobre el comportamiento por inactividad.
+- Escudo personalizado cuando necesitas mensajes o visuales propios.
+- Renderizado seguro activado por defecto.
+
+## Tabla de Contenidos
+
+- [Requisitos](#requisitos)
+- [Instalación](#instalación)
+- [Inicio Rápido](#inicio-rápido)
+- [Personalización](#personalización)
+- [Comportamiento](#comportamiento)
+- [Cuándo Usarlo](#cuándo-usarlo)
+- [FAQ](#faq)
+- [Licencia](#licencia)
 
 ## Requisitos
 
@@ -17,16 +30,26 @@ Casos de uso útiles:
 
 ## Instalación
 
-Añade ScreenPrivacy como dependencia de Swift Package en Xcode o mediante `Package.swift`.
+Añade `ScreenPrivacy` como dependencia de Swift Package en Xcode o en `Package.swift`:
 
-## Uso
+```swift
+dependencies: [
+    .package(path: "../Packages/ScreenPrivacy")
+]
+```
 
-Aplica el modificador a cualquier vista que quieras proteger:
+Después impórtalo donde vayas a proteger una vista:
 
 ```swift
 import ScreenPrivacy
 import SwiftUI
+```
 
+## Inicio Rápido
+
+El modificador por defecto es la vía rápida:
+
+```swift
 struct AccountView: View {
     var body: some View {
         AccountDetailsView()
@@ -35,12 +58,11 @@ struct AccountView: View {
 }
 ```
 
-Proporciona un escudo personalizado cuando quieras un aspecto con marca:
+### Escudo Personalizado
+
+Usa un escudo personalizado cuando quieras controlar el tono, los colores o el layout:
 
 ```swift
-import ScreenPrivacy
-import SwiftUI
-
 struct AccountView: View {
     var body: some View {
         AccountDetailsView()
@@ -50,9 +72,13 @@ struct AccountView: View {
                         .symbolRenderingMode(.hierarchical)
                         .imageScale(.large)
                         .font(.largeTitle)
+
                     Text("Privado")
                         .font(.title2)
                         .bold()
+
+                    Text("Oculto mientras esta pantalla no sea segura para mostrarse.")
+                        .font(.subheadline)
                 }
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
                 .background(.background)
@@ -62,12 +88,11 @@ struct AccountView: View {
 }
 ```
 
-Usa el contenedor si prefieres composición:
+### API Con Contenedor
+
+Si prefieres composición en lugar de modificadores:
 
 ```swift
-import ScreenPrivacy
-import SwiftUI
-
 struct AccountView: View {
     var body: some View {
         ScreenPrivacyContainer {
@@ -77,37 +102,63 @@ struct AccountView: View {
 }
 ```
 
-## Comportamiento
-
-- Muestra el escudo cuando la escena se vuelve inactiva.
-- Puede ampliar opcionalmente el escudo cuando se detecta captura de pantalla.
-- Aplica `privacySensitive()` al contenido protegido.
-- Usa renderizado seguro por defecto para bloquear capturas y grabaciones.
-- El renderizado seguro se implementa alojando SwiftUI dentro del canvas de un campo de texto seguro.
-
 ## Personalización
 
-- Establece `isEnabled` en `false` para desactivar el escudo.
-- Establece `includeCaptureDetection` en `false` si solo quieres escudo en inactividad.
-- Establece `blocksScreenCapture` en `false` si quieres solo el escudo sin renderizado seguro.
+`ScreenPrivacy` mantiene una API pequeña:
 
-## Consejos
+| Opción | Valor por defecto | Propósito |
+| --- | --- | --- |
+| `isEnabled` | `true` | Activa o desactiva el comportamiento del escudo. |
+| `includeCaptureDetection` | `true` | Añade protección por captura sobre el escudo por inactividad. |
+| `blocksScreenCapture` | `true` | Usa renderizado seguro para dificultar capturas y grabaciones. |
 
-- Usa un escudo personalizado mínimo para transiciones suaves.
-- Prefiere `.background(.background)` para un aspecto adaptativo claro/oscuro.
-- Si usas tu propio color de fondo, asegúrate de que el texto sea legible en ambos temas.
+Ejemplo con configuración explícita:
+
+```swift
+struct AccountView: View {
+    var body: some View {
+        AccountDetailsView()
+            .screenPrivacyShield(
+                isEnabled: true,
+                includeCaptureDetection: false,
+                blocksScreenCapture: true
+            )
+    }
+}
+```
+
+## Comportamiento
+
+- Muestra el escudo cuando la escena pasa a inactiva.
+- También puede mostrar el escudo cuando se detecta captura de pantalla.
+- Aplica `privacySensitive()` al contenido protegido.
+- Usa un contenedor de campo de texto seguro cuando `blocksScreenCapture` está activado.
+- Anima la aparición del escudo con una transición de opacidad.
+
+## Cuándo Usarlo
+
+`ScreenPrivacy` encaja bien cuando tu app muestra:
+
+- saldos o detalles de pago
+- datos de salud o bienestar
+- notas privadas, diarios o mensajes
+- dashboards internos o herramientas operativas
+- cualquier cosa que no deba verse en snapshots del app switcher
 
 ## FAQ
 
 **¿Bloquea las capturas?**  
-Sí, por defecto. ScreenPrivacy usa un contenedor de campo de texto seguro cuando `blocksScreenCapture` es `true`, que es el valor predeterminado.
+Sí, por defecto. Cuando `blocksScreenCapture` es `true`, el contenido protegido se aloja dentro de un contenedor seguro.
 
 **¿Funciona en widgets o extensiones?**  
-Este paquete está pensado para vistas SwiftUI en tu app. No está diseñado para proteger timelines de widgets.
+Está diseñado para vistas SwiftUI dentro de tu app. Las timelines de widgets quedan fuera de alcance.
 
 **¿Puedo añadir analítica o logging?**  
-Sí. Puedes envolver `ScreenPrivacyContainer` y observar el ciclo de vida de la app para registrar eventos, sin cambiar el escudo.
+Sí. Puedes envolver `ScreenPrivacyContainer` o la pantalla protegida con tu propia lógica de ciclo de vida sin cambiar la API del paquete.
+
+**¿Debería dejar siempre activada la detección de captura?**  
+Normalmente sí. Pero si tu producto solo necesita privacidad en el app switcher, establece `includeCaptureDetection` en `false`.
 
 ## Licencia
 
-MIT
+[MIT](../LICENSE)
