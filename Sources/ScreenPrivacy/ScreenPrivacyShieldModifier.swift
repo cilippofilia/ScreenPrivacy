@@ -6,7 +6,9 @@
 //
 
 import SwiftUI
+#if canImport(UIKit)
 import UIKit
+#endif
 
 /// Applies a privacy shield and observes lifecycle/capture changes.
 struct ScreenPrivacyShieldModifier<Shield: View>: ViewModifier {
@@ -83,6 +85,7 @@ struct ScreenPrivacyShieldModifier<Shield: View>: ViewModifier {
             }
         }
 
+        #if canImport(UIKit)
         if includeCaptureDetection {
             base.onReceive(
                 NotificationCenter.default.publisher(
@@ -94,5 +97,8 @@ struct ScreenPrivacyShieldModifier<Shield: View>: ViewModifier {
         } else {
             base
         }
+        #else
+        base
+        #endif
     }
 }

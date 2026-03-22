@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+#if canImport(UIKit)
 import UIKit
 
 /// Wraps SwiftUI content in a secure UIKit container to prevent capture.
@@ -94,3 +95,17 @@ fileprivate final class SecureContainerTextField: UITextField {
         return nil
     }
 }
+#else
+/// Fallback wrapper used when UIKit is unavailable during host-side testing.
+struct SecureContentView<Content: View>: View {
+    let content: Content
+
+    init(@ViewBuilder content: () -> Content) {
+        self.content = content()
+    }
+
+    var body: some View {
+        content
+    }
+}
+#endif

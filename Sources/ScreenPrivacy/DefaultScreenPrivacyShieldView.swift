@@ -9,8 +9,6 @@ import SwiftUI
 
 /// The default privacy shield shown when sensitive content is hidden.
 public struct DefaultScreenPrivacyShieldView: View {
-    @Environment(\.colorScheme) private var colorScheme
-
     /// Creates the default privacy shield view.
     public init() { }
 

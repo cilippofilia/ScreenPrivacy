@@ -2,7 +2,7 @@
 
 [English](README.md) 🇬🇧 | [Italiano](Docs/README.it.md) 🇮🇹 | [Español](Docs/README.es.md) 🇪🇸 | [Français](Docs/README.fr.md) 🇫🇷 | [Deutsch](Docs/README.de.md) 🇩🇪 | [Русский](Docs/README.ru.md) 🇷🇺
 
-ScreenPrivacy provides a lightweight SwiftUI privacy shield that automatically covers sensitive views when your app goes inactive or when screen capture is detected. It also enables secure rendering by default, which prevents screenshots and screen recordings of the protected content. It is designed to be a one-line add-on that keeps your UI clean, testable, and respectful of user privacy.
+ScreenPrivacy provides a lightweight SwiftUI privacy shield that automatically covers sensitive views when your app goes inactive, with optional screen-capture detection layered on top. It also enables secure rendering by default, which prevents screenshots and screen recordings of the protected content. It is designed to be a one-line add-on that keeps your UI clean, testable, and respectful of user privacy.
 
 Useful usecases:
 - You show account balances, health data, or personal info.
@@ -80,7 +80,7 @@ struct AccountView: View {
 ## Behavior
 
 - Shows the shield when the scene becomes inactive.
-- Optionally shows the shield when screen capture is detected.
+- Optionally extends shielding when screen capture is detected.
 - Applies `privacySensitive()` to the protected content.
 - Uses secure rendering by default to block screenshots and recordings.
 - Secure rendering is implemented by hosting SwiftUI inside a secure text field canvas view.
@@ -100,7 +100,7 @@ struct AccountView: View {
 ## FAQ
 
 **Does this block screenshots?**  
-Yes. ScreenPrivacy uses a secure text field container to block screenshots and screen recordings by default.
+Yes, by default. ScreenPrivacy uses a secure text field container when `blocksScreenCapture` is `true`, which is the default.
 
 **Does it work in widgets or extensions?**  
 This package targets SwiftUI views in your app. It is not designed to shield widget timelines, yet.

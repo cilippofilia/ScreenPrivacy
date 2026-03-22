@@ -2,7 +2,7 @@
 
 [English](../README.md) 🇬🇧 | [Italiano](README.it.md) 🇮🇹 | [Español](README.es.md) 🇪🇸 | [Français](README.fr.md) 🇫🇷 | [Deutsch](README.de.md) 🇩🇪 | [Русский](README.ru.md) 🇷🇺
 
-ScreenPrivacy fournit un écran de confidentialité léger pour SwiftUI qui couvre automatiquement les vues sensibles lorsque l’app devient inactive ou lorsqu’une capture d’écran est détectée. Il active aussi le rendu sécurisé par défaut, qui empêche les captures d’écran et les enregistrements du contenu protégé. Il est conçu pour être un ajout en une ligne, en gardant l’UI propre, testable et respectueuse de la vie privée.
+ScreenPrivacy fournit un écran de confidentialité léger pour SwiftUI qui couvre automatiquement les vues sensibles lorsque l’app devient inactive, avec la détection de capture d’écran comme couche optionnelle supplémentaire. Il active aussi le rendu sécurisé par défaut, qui empêche les captures d’écran et les enregistrements du contenu protégé. Il est conçu pour être un ajout en une ligne, en gardant l’UI propre, testable et respectueuse de la vie privée.
 
 Cas d’usage utiles :
 - Vous affichez des soldes, des données de santé ou des informations personnelles.
@@ -12,8 +12,8 @@ Cas d’usage utiles :
 
 ## Exigences
 
-- iOS 26.0 ou version ultérieure
-- Swift 6.2 ou version ultérieure
+- iOS 17.0 ou version ultérieure
+- Swift 6.0 ou version ultérieure
 
 ## Installation
 
@@ -80,7 +80,7 @@ struct AccountView: View {
 ## Comportement
 
 - Affiche l’écran lorsque la scène devient inactive.
-- Affiche l’écran de manière optionnelle lorsqu’une capture d’écran est détectée.
+- Peut étendre l’écran de manière optionnelle lorsqu’une capture d’écran est détectée.
 - Applique `privacySensitive()` au contenu protégé.
 - Utilise le rendu sécurisé par défaut pour bloquer les captures et enregistrements.
 - Le rendu sécurisé est implémenté en hébergeant SwiftUI dans le canevas d’un champ de texte sécurisé.
@@ -100,7 +100,7 @@ struct AccountView: View {
 ## FAQ
 
 **Est-ce que cela bloque les captures d’écran ?**  
-Oui. ScreenPrivacy utilise un conteneur de champ de texte sécurisé pour bloquer les captures et enregistrements par défaut.
+Oui, par défaut. ScreenPrivacy utilise un conteneur de champ de texte sécurisé lorsque `blocksScreenCapture` vaut `true`, ce qui est le cas par défaut.
 
 **Cela fonctionne-t-il dans les widgets ou extensions ?**  
 Ce package cible les vues SwiftUI dans votre app. Il n’est pas conçu pour protéger les timelines de widgets.
