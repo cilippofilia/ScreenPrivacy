@@ -2,7 +2,7 @@
 
 [English](../README.md) 🇬🇧 | [Italiano](README.it.md) 🇮🇹 | [Español](README.es.md) 🇪🇸 | [Français](README.fr.md) 🇫🇷 | [Deutsch](README.de.md) 🇩🇪 | [Русский](README.ru.md) 🇷🇺
 
-Protege pantallas sensibles de SwiftUI con un escudo de privacidad que aparece cuando la app pasa a inactiva y, opcionalmente, cuando se detecta captura de pantalla. `ScreenPrivacy` también habilita renderizado seguro por defecto para que el contenido protegido sea más difícil de capturar o grabar.
+Protege pantallas sensibles de SwiftUI con un escudo de privacidad que aparece cuando la app pasa a inactiva y, opcionalmente, cuando se detecta captura de pantalla. `ScreenPrivacy` también aplica `privacySensitive()` y puede alojar el contenido protegido dentro de un contenedor seguro para dificultar capturas y grabaciones.
 
 ## Por Qué ScreenPrivacy
 
@@ -10,7 +10,7 @@ Protege pantallas sensibles de SwiftUI con un escudo de privacidad que aparece c
 - Snapshots seguros en el app switcher mediante protección al quedar inactiva la escena.
 - Detección de captura opcional como capa extra sobre el comportamiento por inactividad.
 - Escudo personalizado cuando necesitas mensajes o visuales propios.
-- Renderizado seguro activado por defecto.
+- API pública pequeña con acceso tanto por modificador como por contenedor.
 
 ## Tabla de Contenidos
 
@@ -20,13 +20,18 @@ Protege pantallas sensibles de SwiftUI con un escudo de privacidad que aparece c
 - [Personalización](#personalización)
 - [Comportamiento](#comportamiento)
 - [Cuándo Usarlo](#cuándo-usarlo)
+- [Estructura Del Paquete](#estructura-del-paquete)
+- [Tests](#tests)
 - [FAQ](#faq)
 - [Licencia](#licencia)
 
 ## Requisitos
 
 - iOS 17.0 o posterior
+- macOS 14.0 o posterior
 - Swift 6.0 o posterior
+
+Estos requisitos coinciden con el `Package.swift` incluido en el repositorio.
 
 ## Instalación
 
@@ -38,7 +43,7 @@ dependencies: [
 ]
 ```
 
-Después impórtalo donde vayas a proteger una vista:
+Después importa el módulo donde vayas a proteger una vista:
 
 ```swift
 import ScreenPrivacy
@@ -110,7 +115,7 @@ struct AccountView: View {
 | --- | --- | --- |
 | `isEnabled` | `true` | Activa o desactiva el comportamiento del escudo. |
 | `includeCaptureDetection` | `true` | Añade protección por captura sobre el escudo por inactividad. |
-| `blocksScreenCapture` | `true` | Usa renderizado seguro para dificultar capturas y grabaciones. |
+| `blocksScreenCapture` | `true` | Usa un contenedor seguro para dificultar capturas y grabaciones. |
 
 Ejemplo con configuración explícita:
 
@@ -132,8 +137,9 @@ struct AccountView: View {
 - Muestra el escudo cuando la escena pasa a inactiva.
 - También puede mostrar el escudo cuando se detecta captura de pantalla.
 - Aplica `privacySensitive()` al contenido protegido.
-- Usa un contenedor de campo de texto seguro cuando `blocksScreenCapture` está activado.
+- Usa un contenedor seguro basado en un campo de texto cuando `blocksScreenCapture` está activado en plataformas UIKit.
 - Anima la aparición del escudo con una transición de opacidad.
+- Usa un wrapper SwiftUI normal cuando UIKit no está disponible durante pruebas host-side.
 
 ## Cuándo Usarlo
 
@@ -145,10 +151,36 @@ struct AccountView: View {
 - dashboards internos o herramientas operativas
 - cualquier cosa que no deba verse en snapshots del app switcher
 
+## Estructura Del Paquete
+
+```text
+ScreenPrivacy/
+├── Sources/ScreenPrivacy/
+│   ├── ScreenPrivacy.swift
+│   ├── ScreenPrivacyContainer.swift
+│   ├── ScreenPrivacyShieldModifier.swift
+│   ├── ScreenPrivacyMonitor.swift
+│   ├── SecureContentView.swift
+│   └── DefaultScreenPrivacyShieldView.swift
+├── Tests/ScreenPrivacyTests/
+├── Docs/
+└── Package.swift
+```
+
+## Tests
+
+El paquete incluye cobertura con Swift Testing para las reglas de visibilidad y el comportamiento del monitor, incluyendo:
+
+- protección en estado inactivo
+- protección activada por captura
+- recálculo al activar o desactivar la protección
+- activación o desactivación de la detección de captura
+- proveedores inyectados del estado de captura
+
 ## FAQ
 
 **¿Bloquea las capturas?**  
-Sí, por defecto. Cuando `blocksScreenCapture` es `true`, el contenido protegido se aloja dentro de un contenedor seguro.
+Por defecto dificulta capturas y grabaciones alojando el contenido protegido dentro de un contenedor seguro cuando `blocksScreenCapture` es `true`.
 
 **¿Funciona en widgets o extensiones?**  
 Está diseñado para vistas SwiftUI dentro de tu app. Las timelines de widgets quedan fuera de alcance.

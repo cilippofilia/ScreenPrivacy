@@ -2,15 +2,15 @@
 
 [English](../README.md) 🇬🇧 | [Italiano](README.it.md) 🇮🇹 | [Español](README.es.md) 🇪🇸 | [Français](README.fr.md) 🇫🇷 | [Deutsch](README.de.md) 🇩🇪 | [Русский](README.ru.md) 🇷🇺
 
-Proteggi le schermate sensibili di SwiftUI con uno scudo privacy che appare quando l’app diventa inattiva e, opzionalmente, quando viene rilevata una cattura schermo. `ScreenPrivacy` abilita anche il rendering sicuro di default, così i contenuti protetti risultano più difficili da catturare o registrare.
+Proteggi le schermate SwiftUI sensibili con uno scudo privacy che appare quando l’app diventa inattiva e, opzionalmente, quando viene rilevata una cattura schermo. `ScreenPrivacy` applica anche `privacySensitive()` e può ospitare i contenuti protetti in un container sicuro per rendere più difficili screenshot e registrazioni.
 
 ## Perché ScreenPrivacy
 
 - Protezione in una riga per viste SwiftUI sensibili.
 - Snapshot sicuri nell’app switcher grazie alla schermatura in stato inattivo.
-- Rilevamento cattura opzionale aggiunto al comportamento di inattività.
+- Rilevamento cattura opzionale aggiunto al comportamento in stato inattivo.
 - Scudo personalizzato quando servono messaggi o visual propri.
-- Rendering sicuro abilitato di default.
+- API pubblica piccola con accesso sia tramite modifier sia tramite container.
 
 ## Indice
 
@@ -20,13 +20,18 @@ Proteggi le schermate sensibili di SwiftUI con uno scudo privacy che appare quan
 - [Personalizzazione](#personalizzazione)
 - [Comportamento](#comportamento)
 - [Quando Usarlo](#quando-usarlo)
+- [Struttura Del Package](#struttura-del-package)
+- [Test](#test)
 - [FAQ](#faq)
 - [Licenza](#licenza)
 
 ## Requisiti
 
 - iOS 17.0 o successivo
+- macOS 14.0 o successivo
 - Swift 6.0 o successivo
+
+Questi requisiti corrispondono al `Package.swift` incluso nel repository.
 
 ## Installazione
 
@@ -38,7 +43,7 @@ dependencies: [
 ]
 ```
 
-Poi importalo dove vuoi proteggere una vista:
+Poi importa il modulo dove vuoi proteggere una vista:
 
 ```swift
 import ScreenPrivacy
@@ -110,7 +115,7 @@ struct AccountView: View {
 | --- | --- | --- |
 | `isEnabled` | `true` | Attiva o disattiva il comportamento dello scudo. |
 | `includeCaptureDetection` | `true` | Aggiunge la schermatura da cattura a quella per inattività. |
-| `blocksScreenCapture` | `true` | Usa il rendering sicuro per rendere più difficili screenshot e registrazioni. |
+| `blocksScreenCapture` | `true` | Usa un container sicuro per rendere più difficili screenshot e registrazioni. |
 
 Esempio con configurazione esplicita:
 
@@ -132,8 +137,9 @@ struct AccountView: View {
 - Mostra lo scudo quando la scena diventa inattiva.
 - Può mostrare lo scudo anche quando viene rilevata una cattura schermo.
 - Applica `privacySensitive()` ai contenuti protetti.
-- Usa un container basato su text field sicuro quando `blocksScreenCapture` è attivo.
+- Usa un container basato su text field sicuro quando `blocksScreenCapture` è attivo sulle piattaforme UIKit.
 - Anima la comparsa dello scudo con una transizione in opacità.
+- Usa un wrapper SwiftUI regolare quando UIKit non è disponibile durante i test host-side.
 
 ## Quando Usarlo
 
@@ -145,10 +151,36 @@ struct AccountView: View {
 - dashboard interne o strumenti operativi
 - qualsiasi contenuto che non dovrebbe apparire nell’app switcher
 
+## Struttura Del Package
+
+```text
+ScreenPrivacy/
+├── Sources/ScreenPrivacy/
+│   ├── ScreenPrivacy.swift
+│   ├── ScreenPrivacyContainer.swift
+│   ├── ScreenPrivacyShieldModifier.swift
+│   ├── ScreenPrivacyMonitor.swift
+│   ├── SecureContentView.swift
+│   └── DefaultScreenPrivacyShieldView.swift
+├── Tests/ScreenPrivacyTests/
+├── Docs/
+└── Package.swift
+```
+
+## Test
+
+Il package include test con Swift Testing per le regole di visibilità e per il comportamento del monitor, inclusi:
+
+- schermatura in stato inattivo
+- schermatura guidata dalla cattura
+- ricalcolo quando si abilita o disabilita la protezione
+- attivazione o disattivazione del rilevamento cattura
+- provider iniettati per lo stato di cattura
+
 ## FAQ
 
 **Blocca gli screenshot?**  
-Sì, di default. Quando `blocksScreenCapture` è `true`, il contenuto protetto viene ospitato in un container sicuro.
+Di default rende più difficili screenshot e registrazioni ospitando i contenuti protetti in un container sicuro quando `blocksScreenCapture` è `true`.
 
 **Funziona in widget o estensioni?**  
 È pensato per viste SwiftUI all’interno dell’app. Le timeline dei widget sono fuori ambito.
