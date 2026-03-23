@@ -1,4 +1,4 @@
-![ScreenPrivacy logo](Images/screenprivacy-logo.svg)
+![ScreenPrivacy logo](Images/screenPrivacy_pill.svg)
 
 # ScreenPrivacy
 
