@@ -1,5 +1,7 @@
 # ScreenPrivacy
 
+![ScreenPrivacy logo](Images/screenprivacy-logo.svg)
+
 [English](../README.md) 🇬🇧 | [Italiano](README.it.md) 🇮🇹 | [Español](README.es.md) 🇪🇸 | [Français](README.fr.md) 🇫🇷 | [Deutsch](README.de.md) 🇩🇪 | [Русский](README.ru.md) 🇷🇺
 
 Protégez les écrans SwiftUI sensibles avec un écran de confidentialité qui apparaît lorsque l’app devient inactive et, en option, lorsqu’une capture d’écran est détectée. `ScreenPrivacy` applique aussi `privacySensitive()` et peut héberger le contenu protégé dans un conteneur sécurisé pour rendre captures et enregistrements plus difficiles.

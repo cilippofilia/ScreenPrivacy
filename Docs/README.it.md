@@ -1,5 +1,7 @@
 # ScreenPrivacy
 
+![ScreenPrivacy logo](Images/screenprivacy-logo.svg)
+
 [English](../README.md) 🇬🇧 | [Italiano](README.it.md) 🇮🇹 | [Español](README.es.md) 🇪🇸 | [Français](README.fr.md) 🇫🇷 | [Deutsch](README.de.md) 🇩🇪 | [Русский](README.ru.md) 🇷🇺
 
 Proteggi le schermate SwiftUI sensibili con uno scudo privacy che appare quando l’app diventa inattiva e, opzionalmente, quando viene rilevata una cattura schermo. `ScreenPrivacy` applica anche `privacySensitive()` e può ospitare i contenuti protetti in un container sicuro per rendere più difficili screenshot e registrazioni.
