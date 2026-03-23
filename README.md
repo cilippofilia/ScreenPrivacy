@@ -1,6 +1,6 @@
-# ScreenPrivacy
-
 ![ScreenPrivacy logo](Docs/Images/screenprivacy-logo.svg)
+
+# ScreenPrivacy
 
 [English](README.md) 🇬🇧 | [Italiano](Docs/README.it.md) 🇮🇹 | [Español](Docs/README.es.md) 🇪🇸 | [Français](Docs/README.fr.md) 🇫🇷 | [Deutsch](Docs/README.de.md) 🇩🇪 | [Русский](Docs/README.ru.md) 🇷🇺
 
