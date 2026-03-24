@@ -1,43 +1,23 @@
-![ScreenPrivacy logo](Images/screenPrivacy_pill.svg)
+<img src="Images/screenPrivacy_pill.svg" alt="ScreenPrivacy-Logo" width="40%" />
 
 # ScreenPrivacy
 
 [English](../README.md) 🇬🇧 | [Italiano](README.it.md) 🇮🇹 | [Español](README.es.md) 🇪🇸 | [Français](README.fr.md) 🇫🇷 | [Deutsch](README.de.md) 🇩🇪 | [Русский](README.ru.md) 🇷🇺
 
-Schützen Sie sensible SwiftUI-Bildschirme mit einem Privatsphärenschutz, der erscheint, wenn Ihre App inaktiv wird, und optional auch dann, wenn eine Bildschirmaufnahme erkannt wird. `ScreenPrivacy` wendet außerdem `privacySensitive()` an und kann geschützte Inhalte in einem sicheren Container hosten, damit Screenshots und Aufnahmen schwerer werden.
+`ScreenPrivacy` ist ein SwiftUI-Paket zum Ausblenden sensibler Bildschirme, wenn Ihre App inaktiv wird, und optional auch dann, wenn eine Bildschirmaufnahme erkannt wird. Es wendet `privacySensitive()` auf den geschützten Inhalt an und kann diesen Inhalt bei aktivierter Capture-Blockierung in einen sicheren, UIKit-basierten Container einbetten.
 
-## Warum ScreenPrivacy
+## Über Das Paket
 
-- Schutz sensibler SwiftUI-Views mit einer einzigen Zeile.
-- Sichere App-Switcher-Snapshots durch Schutz bei inaktiver Szene.
-- Optionale Aufnahmeerkennung zusätzlich zum Verhalten bei inaktiver Szene.
-- Eigene Schutzoberfläche für gebrandete oder domänenspezifische Hinweise.
-- Kleine öffentliche API mit Einstieg über Modifier und Container.
+Verwenden Sie `ScreenPrivacy`, wenn eine View weder in App-Switcher-Snapshots noch während einer aktiven Aufnahme sichtbar bleiben soll. Das Paket hält den Einstieg bewusst einfach:
 
-## Inhaltsverzeichnis
-
-- [Anforderungen](#anforderungen)
-- [Installation](#installation)
-- [Schnellstart](#schnellstart)
-- [Anpassung](#anpassung)
-- [Verhalten](#verhalten)
-- [Wann Es Sinnvoll Ist](#wann-es-sinnvoll-ist)
-- [Paketstruktur](#paketstruktur)
-- [Tests](#tests)
-- [FAQ](#faq)
-- [Lizenz](#lizenz)
-
-## Anforderungen
-
-- iOS 17.0 oder neuer
-- macOS 14.0 oder neuer
-- Swift 6.0 oder neuer
-
-Diese Anforderungen entsprechen der eingecheckten `Package.swift`.
+- Verwenden Sie für den häufigsten Fall einen einzelnen View-Modifier.
+- Wechseln Sie zu einem Container, wenn Komposition in Ihrem View-Tree besser passt.
+- Behalten Sie den Standardschutz bei oder liefern Sie eine eigene Shield-View.
+- Deaktivieren Sie die Aufnahmeerkennung, wenn Sie nur den Schutz bei inaktiver Szene benötigen.
 
 ## Installation
 
-Fügen Sie `ScreenPrivacy` in Xcode oder in `Package.swift` als Swift-Package-Abhängigkeit hinzu:
+Fügen Sie `ScreenPrivacy` in Xcode als Swift-Package-Abhängigkeit hinzu oder referenzieren Sie es während der lokalen Entwicklung in `Package.swift`:
 
 ```swift
 dependencies: [
@@ -45,7 +25,7 @@ dependencies: [
 ]
 ```
 
-Importieren Sie das Modul dann dort, wo Sie eine View schützen möchten:
+Importieren Sie es anschließend in jeder SwiftUI-Datei, die geschützt werden soll:
 
 ```swift
 import ScreenPrivacy
@@ -54,7 +34,7 @@ import SwiftUI
 
 ## Schnellstart
 
-Der Standard-Modifier ist der schnellste Einstieg:
+Die kleinste sinnvolle Integration ist der Modifier:
 
 ```swift
 struct AccountView: View {
@@ -65,9 +45,11 @@ struct AccountView: View {
 }
 ```
 
-### Eigener Schutz
+Damit werden der Standardschutz, die Aufnahmeerkennung und sicheres Rendering standardmäßig aktiviert.
 
-Verwenden Sie einen eigenen Schutz, wenn Sie Tonalität, Farben oder Layout selbst bestimmen möchten:
+## Verwendung
+
+Verwenden Sie einen eigenen Schutz, wenn die Ersatzoberfläche zur Sprache Ihres Produkts passen soll:
 
 ```swift
 struct AccountView: View {
@@ -95,9 +77,7 @@ struct AccountView: View {
 }
 ```
 
-### Container-API
-
-Wenn Sie Komposition gegenüber einem Modifier bevorzugen:
+Wenn Sie Komposition einem Modifier vorziehen, verwenden Sie `ScreenPrivacyContainer`:
 
 ```swift
 struct AccountView: View {
@@ -109,17 +89,17 @@ struct AccountView: View {
 }
 ```
 
-## Anpassung
+## Konfiguration
 
-`ScreenPrivacy` hält die API bewusst klein:
+`ScreenPrivacy` bietet drei Laufzeitoptionen:
 
-| Option | Standard | Zweck |
+| Option | Standard | Wirkung |
 | --- | --- | --- |
-| `isEnabled` | `true` | Aktiviert oder deaktiviert den Schutz. |
-| `includeCaptureDetection` | `true` | Fügt Schutz bei Bildschirmaufnahme zusätzlich zum Inaktivitätsschutz hinzu. |
-| `blocksScreenCapture` | `true` | Verwendet einen sicheren Container, damit Screenshots und Aufnahmen schwerer werden. |
+| `isEnabled` | `true` | Schaltet den Privatsphärenschutz ein oder aus. |
+| `includeCaptureDetection` | `true` | Zeigt den Schutz an, wenn der Bildschirm aufgenommen wird. |
+| `blocksScreenCapture` | `true` | Bettet den Inhalt auf UIKit-Plattformen in den sicheren Container des Pakets ein. |
 
-Beispiel mit expliziter Konfiguration:
+Beispiel:
 
 ```swift
 struct AccountView: View {
@@ -136,22 +116,32 @@ struct AccountView: View {
 
 ## Verhalten
 
-- Zeigt den Schutz, wenn die Szene inaktiv wird.
-- Kann den Schutz auch bei erkannter Bildschirmaufnahme anzeigen.
-- Wendet `privacySensitive()` auf den geschützten Inhalt an.
-- Verwendet einen sicheren, textfeldbasierten Container, wenn `blocksScreenCapture` auf UIKit-Plattformen aktiviert ist.
-- Animiert die Einblendung des Schutzes mit einer Opazitäts-Transition.
-- Verwendet einen normalen SwiftUI-Wrapper, wenn UIKit bei hostseitigen Tests nicht verfügbar ist.
+Die Sichtbarkeitsregeln des Pakets sind bewusst klein gehalten:
 
-## Wann Es Sinnvoll Ist
+- Wenn der Schutz deaktiviert ist, bleibt das Shield verborgen.
+- Wenn die Szene inaktiv wird, wird das Shield sichtbar.
+- Wenn die Aufnahmeerkennung aktiv ist und der Bildschirm aufgenommen wird, wird das Shield sichtbar.
+- Geschützter Inhalt wird mit `privacySensitive()` markiert.
+- Die Darstellung des Shields verwendet eine Opazitäts-Transition.
 
-`ScreenPrivacy` eignet sich besonders, wenn Ihre App Folgendes zeigt:
+Auf UIKit-Plattformen wird sicheres Rendering mit einem Container umgesetzt, der auf einem sicheren Textfeld basiert. In Umgebungen ohne UIKit fällt das Paket auf einen normalen SwiftUI-Wrapper zurück.
+
+## Wann Man Es Verwenden Sollte
+
+`ScreenPrivacy` eignet sich für Bildschirme wie:
 
 - Kontostände oder Zahlungsdetails
 - Gesundheits- oder Wellnessdaten
 - private Notizen, Journale oder Nachrichten
 - interne Dashboards oder operative Werkzeuge
-- alles, was nicht im App-Switcher erscheinen sollte
+
+## Anforderungen
+
+- iOS 17.0 oder neuer
+- macOS 14.0 oder neuer
+- Swift 6.0 oder neuer
+
+Diese Werte entsprechen der eingecheckten `Package.swift`.
 
 ## Paketstruktur
 
@@ -171,27 +161,13 @@ ScreenPrivacy/
 
 ## Tests
 
-Das Paket enthält Swift-Testing-Abdeckung für die zentralen Sichtbarkeitsregeln und das Verhalten des Monitors, darunter:
+Das Paket enthält Swift-Testing-Abdeckung für:
 
 - Schutz bei inaktiver Szene
-- Schutz durch erkannte Aufnahme
-- Neuberechnung beim Aktivieren oder Deaktivieren
-- Aktivieren oder Deaktivieren der Aufnahmeerkennung
+- Schutz bei erkannter Aufnahme
+- Neuberechnung beim Aktivieren und Deaktivieren
+- Umschalten der Aufnahmeerkennung
 - injizierte Provider für den Aufnahmestatus
-
-## FAQ
-
-**Blockiert das Screenshots?**  
-Standardmäßig werden Screenshots und Aufnahmen erschwert, indem der geschützte Inhalt in einem sicheren Container gehostet wird, wenn `blocksScreenCapture` auf `true` steht.
-
-**Funktioniert es in Widgets oder Erweiterungen?**  
-Es ist für SwiftUI-Views innerhalb Ihrer App gedacht. Widget-Timelines sind nicht Teil des Umfangs.
-
-**Kann ich Analytics oder Logging hinzufügen?**  
-Ja. Sie können `ScreenPrivacyContainer` oder den geschützten Bildschirm mit eigener Lifecycle-Erfassung umschließen, ohne die Package-API zu ändern.
-
-**Sollte ich die Aufnahmeerkennung immer aktiviert lassen?**  
-Meistens ja. Wenn Ihr Produkt jedoch nur App-Switcher-Privatsphäre braucht, setzen Sie `includeCaptureDetection` auf `false`.
 
 ## Lizenz
 
