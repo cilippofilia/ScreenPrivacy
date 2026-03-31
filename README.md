@@ -2,6 +2,7 @@
 <img src="Docs/Images/screenPrivacy_pill.svg" alt="ScreenPrivacy logo" width="60%" />
 </p>
 <p align="center">
+    <img src="https://img.shields.io/badge/iOS-17.0+-b96229.svg" />
     <img src="https://img.shields.io/badge/macOS-14.0+-2980b9.svg" />
     <img src="https://img.shields.io/badge/swift-6.0+-8e44ad.svg" />
     <a href="https://x.com/fcilia_dev">
