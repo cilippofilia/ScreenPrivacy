@@ -1,4 +1,13 @@
-<img src="Docs/Images/screenPrivacy_pill.svg" alt="ScreenPrivacy logo" width="40%" />
+<p align="center">
+<img src="Docs/Images/screenPrivacy_pill.svg" alt="ScreenPrivacy logo" width="60%" />
+</p>
+<p align="center">
+    <img src="https://img.shields.io/badge/macOS-14.0+-2980b9.svg" />
+    <img src="https://img.shields.io/badge/swift-6.0+-8e44ad.svg" />
+    <a href="https://x.com/fcilia_dev">
+        <img src="https://img.shields.io/badge/Contact-@fcilia_dev-95a5a6.svg?style=flat" alt="Twitter: @fcilia_dev" />
+    </a>
+</p>
 
 # ScreenPrivacy
 
